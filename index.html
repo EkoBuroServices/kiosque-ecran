@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>EKO BURO SERVICES</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Nunito:wght@400;600;700;900&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { width: 100%; height: 100%; overflow: hidden; background: #1a1a1a; font-family: 'Nunito', sans-serif; }
+
+  .carousel { width: 100vw; height: 100vh; position: relative; }
+
+  .slide { position: absolute; inset: 0; width: 100%; height: 100%; opacity: 0; transition: opacity 0.8s ease; pointer-events: none; }
+  .slide.active { opacity: 1; pointer-events: auto; }
+
+  .indicators { position: fixed; bottom: 1.5vh; left: 50%; transform: translateX(-50%); display: flex; gap: 0.6em; z-index: 100; }
+  .dot { width: 10px; height: 10px; border-radius: 50%; background: rgba(255,255,255,0.4); transition: background 0.4s; }
+  .dot.active { background: white; }
+
+  .page { width: 100%; height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: space-between; padding: 2vh 3vw; position: relative; overflow: hidden; }
+  .page::before { content: ''; position: absolute; top: -8vw; left: 50%; transform: translateX(-50%); width: 90vw; height: 90vw; border-radius: 50%; border: 2.5vw solid rgba(255,255,255,0.18); pointer-events: none; }
+  .page::after  { content: ''; position: absolute; top: -14vw; left: 50%; transform: translateX(-50%); width: 110vw; height: 110vw; border-radius: 50%; border: 1.5vw solid rgba(255,255,255,0.10); pointer-events: none; }
+
+  .header { text-align: center; z-index: 1; }
+  .brand { font-family: 'Bebas Neue', sans-serif; font-size: clamp(2.8rem,9vw,7rem); letter-spacing: 0.04em; line-height: 1; color: #1a1a1a; }
+  .brand span { color: #F37021; -webkit-text-stroke: 2px #1a1a1a; }
+  .address { font-size: clamp(0.75rem,2.2vw,1.3rem); color: #1a1a1a; font-weight: 700; margin-top: 0.3em; }
+
+  .card { background: white; border-radius: 2.5vw; padding: clamp(1rem,3vh,2.5rem) clamp(1.5rem,5vw,4rem); width: 100%; max-width: 820px; box-shadow: 0 8px 40px rgba(0,0,0,0.18); z-index: 1; }
+  .card-title { font-family: 'Bebas Neue', sans-serif; font-size: clamp(3rem,10vw,7.5rem); color: #F37021; text-align: center; line-height: 0.95; letter-spacing: 0.02em; }
+  .card-title-sm { font-family: 'Bebas Neue', sans-serif; font-size: clamp(2.5rem,8vw,6rem); color: #F37021; text-align: center; line-height: 0.95; letter-spacing: 0.02em; }
+  .star-divider { text-align: center; font-size: clamp(1rem,2.5vw,1.6rem); color: #F37021; margin: 0.6em 0; letter-spacing: 0.5em; }
+
+  /* SLIDE 1 */
+  #slide1 .page { background: #F37021; }
+  .dates-list { list-style: none; display: flex; flex-direction: column; gap: 0.5em; }
+  .dates-list li { display: flex; align-items: center; gap: 1em; font-size: clamp(1rem,3.2vw,2rem); font-weight: 700; color: #1a1a1a; padding: 0.45em 0; border-bottom: 1.5px solid #f0e8df; }
+  .dates-list li:last-child { border-bottom: none; }
+  .cal-icon { width: clamp(2rem,5vw,3.2rem); height: clamp(2rem,5vw,3.2rem); background: #F37021; border-radius: 0.5em; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+  .cal-icon svg { width: 65%; height: 65%; fill: white; }
+  .date-sup { font-size: 0.55em; vertical-align: super; font-weight: 900; }
+  .merci { text-align: center; font-size: clamp(0.95rem,2.8vw,1.7rem); color: #F37021; font-style: italic; font-weight: 700; margin-top: 0.9em; }
+
+  /* SLIDE 2 */
+  #slide2 .page { background: #1a1a1a; }
+  #slide2 .brand { color: white; }
+  #slide2 .brand span { -webkit-text-stroke: 2px white; }
+  #slide2 .address { color: rgba(255,255,255,0.75); }
+  #slide2 .page::before { border-color: rgba(243,112,33,0.25); }
+  #slide2 .page::after  { border-color: rgba(243,112,33,0.12); }
+
+  .horaires-list { list-style: none; display: flex; flex-direction: column; gap: 0.35em; }
+  .horaires-list li { display: flex; align-items: center; justify-content: space-between; gap: 1em; font-size: clamp(0.9rem,2.8vw,1.75rem); font-weight: 700; color: #1a1a1a; padding: 0.4em 0.5em; border-bottom: 1.5px solid #f0e8df; }
+  .horaires-list li:last-child { border-bottom: none; }
+  .jour { display: flex; align-items: center; gap: 0.6em; }
+  .clock-icon { width: clamp(1.6rem,3.8vw,2.6rem); height: clamp(1.6rem,3.8vw,2.6rem); background: #F37021; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+  .clock-icon svg { width: 60%; height: 60%; fill: white; }
+  .heure { color: #F37021; font-weight: 900; white-space: nowrap; }
+
+  /* SERVICES */
+  .services { display: flex; gap: clamp(0.8rem,2vw,2rem); z-index: 1; flex-wrap: wrap; justify-content: center; }
+  .service-item { display: flex; flex-direction: column; align-items: center; gap: 0.4em; text-align: center; }
+  .service-icon { width: clamp(2.2rem,5vw,3.5rem); height: clamp(2.2rem,5vw,3.5rem); background: #F37021; border-radius: 50%; display: flex; align-items: center; justify-content: center; border: 3px solid white; font-size: clamp(0.9rem,2vw,1.4rem); }
+  .service-label { color: white; font-weight: 900; font-size: clamp(0.5rem,1.2vw,0.75rem); text-transform: uppercase; letter-spacing: 0.04em; line-height: 1.2; max-width: 90px; }
+  .service-sublabel { color: rgba(255,255,255,0.85); font-size: clamp(0.4rem,1vw,0.6rem); line-height: 1.2; max-width: 90px; }
+
+  /* BARRE PROGRESSION */
+  .progress-bar { position: fixed; bottom: 0; left: 0; height: 4px; background: #F37021; width: 0%; z-index: 200; }
+</style>
+</head>
+<body>
+<div class="carousel">
+
+  <!-- SLIDE 1 : FERMETURE -->
+  <div class="slide active" id="slide1">
+    <div class="page">
+      <div class="header">
+        <div class="brand">EKO <span>BURO</span> SERVICES</div>
+        <div class="address">📍 53 rue Jean Jaurès 92800 Puteaux</div>
+      </div>
+      <div class="card">
+        <div class="card-title">FERMETURE<br>EXCEPTIONNELLE</div>
+        <div class="star-divider">★</div>
+        <ul class="dates-list">
+          <li><span class="cal-icon"><svg viewBox="0 0 24 24"><path d="M19 4h-1V2h-2v2H8V2H6v2H5a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2V6a2 2 0 00-2-2zm0 16H5V9h14v11zM7 11h2v2H7zm4 0h2v2h-2zm4 0h2v2h-2zm-8 4h2v2H7zm4 0h2v2h-2z"/></svg></span>vendredi 1<span class="date-sup">er</span> mai</li>
+          <li><span class="cal-icon"><svg viewBox="0 0 24 24"><path d="M19 4h-1V2h-2v2H8V2H6v2H5a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2V6a2 2 0 00-2-2zm0 16H5V9h14v11zM7 11h2v2H7zm4 0h2v2h-2zm4 0h2v2h-2zm-8 4h2v2H7zm4 0h2v2h-2z"/></svg></span>vendredi 8 mai</li>
+          <li><span class="cal-icon"><svg viewBox="0 0 24 24"><path d="M19 4h-1V2h-2v2H8V2H6v2H5a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2V6a2 2 0 00-2-2zm0 16H5V9h14v11zM7 11h2v2H7zm4 0h2v2h-2zm4 0h2v2h-2zm-8 4h2v2H7zm4 0h2v2h-2z"/></svg></span>jeudi 14 mai</li>
+          <li><span class="cal-icon"><svg viewBox="0 0 24 24"><path d="M19 4h-1V2h-2v2H8V2H6v2H5a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2V6a2 2 0 00-2-2zm0 16H5V9h14v11zM7 11h2v2H7zm4 0h2v2h-2zm4 0h2v2h-2zm-8 4h2v2H7zm4 0h2v2h-2z"/></svg></span>lundi 25 mai</li>
+        </ul>
+        <div class="merci">Merci de votre compréhension</div>
+      </div>
+      <div class="services">
+        <div class="service-item"><div class="service-icon">✏️</div><div class="service-label">Papeterie</div><div class="service-sublabel">Fournitures scolaires et de bureau</div></div>
+        <div class="service-item"><div class="service-icon">🖨️</div><div class="service-label">Cartouches</div><div class="service-sublabel">Encre & Toner Imprimantes</div></div>
+        <div class="service-item"><div class="service-icon">📦</div><div class="service-label">Relais Colis</div><div class="service-sublabel">Expédiez & recevez vos colis</div></div>
+        <div class="service-item"><div class="service-icon">✉️</div><div class="service-label">Courrier</div><div class="service-sublabel">Services La Poste</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 2 : HORAIRES -->
+  <div class="slide" id="slide2">
+    <div class="page">
+      <div class="header">
+        <div class="brand">EKO <span>BURO</span> SERVICES</div>
+        <div class="address">📍 53 rue Jean Jaurès 92800 Puteaux</div>
+      </div>
+      <div class="card">
+        <div class="card-title-sm">NOS HORAIRES<br>D'OUVERTURE</div>
+        <div class="star-divider">★</div>
+        <ul class="horaires-list">
+          <li><span class="jour"><span class="clock-icon"><svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67V7z"/></svg></span>Lundi</span><span class="heure">14h – 19h</span></li>
+          <li><span class="jour"><span class="clock-icon"><svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67V7z"/></svg></span>Mardi &amp; Mercredi</span><span class="heure">10h – 19h</span></li>
+          <li><span class="jour"><span class="clock-icon"><svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67V7z"/></svg></span>Jeudi</span><span class="heure">12h – 19h</span></li>
+          <li><span class="jour"><span class="clock-icon"><svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67V7z"/></svg></span>Vendredi</span><span class="heure">10h – 19h</span></li>
+          <li><span class="jour"><span class="clock-icon"><svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67V7z"/></svg></span>Samedi</span><span class="heure">10h – 18h</span></li>
+        </ul>
+      </div>
+      <div class="services">
+        <div class="service-item"><div class="service-icon">✏️</div><div class="service-label">Papeterie</div><div class="service-sublabel">Fournitures scolaires et de bureau</div></div>
+        <div class="service-item"><div class="service-icon">🖨️</div><div class="service-label">Cartouches</div><div class="service-sublabel">Encre & Toner Imprimantes</div></div>
+        <div class="service-item"><div class="service-icon">📦</div><div class="service-label">Relais Colis</div><div class="service-sublabel">Expédiez & recevez vos colis</div></div>
+        <div class="service-item"><div class="service-icon">✉️</div><div class="service-label">Courrier</div><div class="service-sublabel">Services La Poste</div></div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<div class="indicators">
+  <div class="dot active" id="dot0"></div>
+  <div class="dot" id="dot1"></div>
+</div>
+
+<div class="progress-bar" id="progress"></div>
+
+<script>
+  const slides = document.querySelectorAll('.slide');
+  const dots   = document.querySelectorAll('.dot');
+  const progress = document.getElementById('progress');
+  const DURATION = 5000;
+  let current = 0, startTime = null;
+
+  function showSlide(i) {
+    slides.forEach((s,j) => s.classList.toggle('active', i===j));
+    dots.forEach((d,j)   => d.classList.toggle('active', i===j));
+  }
+
+  function tick(ts) {
+    if (!startTime) startTime = ts;
+    const pct = Math.min(((ts - startTime) / DURATION) * 100, 100);
+    progress.style.width = pct + '%';
+    if (pct < 100) {
+      requestAnimationFrame(tick);
+    } else {
+      current = (current + 1) % slides.length;
+      showSlide(current);
+      startTime = null;
+      progress.style.transition = 'none';
+      progress.style.width = '0%';
+      setTimeout(() => { progress.style.transition = ''; requestAnimationFrame(tick); }, 50);
+    }
+  }
+  requestAnimationFrame(tick);
+</script>
+</body>
+</html>
